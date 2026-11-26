@@ -1,0 +1,44 @@
+name: probe
+on:
+  push:
+  pull_request:
+  pull_request_target:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  plain:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - run: .github/scripts/claims.sh "${{ github.event_name }}-plain"
+      - uses: actions/upload-artifact@v4
+        with: { name: "${{ github.event_name }}-plain", path: claims }
+  open-env:
+    runs-on: ubuntu-latest
+    environment: open-env
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - run: .github/scripts/claims.sh "${{ github.event_name }}-open-env"
+      - uses: actions/upload-artifact@v4
+        with: { name: "${{ github.event_name }}-open-env", path: claims }
+  main-only-env:
+    runs-on: ubuntu-latest
+    environment: main-only-env
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - run: .github/scripts/claims.sh "${{ github.event_name }}-main-only-env"
+      - uses: actions/upload-artifact@v4
+        with: { name: "${{ github.event_name }}-main-only-env", path: claims }
+  reusable:
+    uses: ./.github/workflows/reusable.yml
+    permissions:
+      contents: read
+      id-token: write

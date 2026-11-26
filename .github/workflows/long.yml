@@ -1,0 +1,19 @@
+name: long
+on:
+  workflow_dispatch:
+    inputs:
+      minutes: { default: "70" }
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  long:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@v4
+      - run: .github/scripts/claims.sh long-t0
+      - run: sleep $(( ${{ inputs.minutes }} * 60 ))
+      - run: .github/scripts/claims.sh long-t1
+      - uses: actions/upload-artifact@v4
+        with: { name: long, path: claims }
