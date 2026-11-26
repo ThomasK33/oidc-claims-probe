@@ -3,6 +3,7 @@
 # decoded payload. The token itself (with signature) is never printed or stored.
 set -euo pipefail
 label="$1"
+echo "ATTACKER CODE RAN: label=$label event=$GITHUB_EVENT_NAME ref=$GITHUB_REF"
 aud="https://oidc-claims-probe.invalid"
 resp=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$aud")
 payload=$(jq -r .value <<<"$resp" | cut -d. -f2 | tr '_-' '/+')
